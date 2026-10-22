@@ -1,0 +1,40 @@
+name: Build Android Debug APK
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch: # Cho phép bấm nút chạy thủ công trên GitHub
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Tải mã nguồn từ repository về máy chủ ảo của GitHub
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    # 2. Cài đặt Java JDK 17 (Tiêu chuẩn cho các dự án Android/Gradle hiện đại)
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+        cache: 'gradle' # Tự động cache thư viện giúp build nhanh hơn ở các lần sau
+
+    # 3. Cấp quyền thực thi cho tệp gradlew
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    # 4. Thực thi lệnh build bản Debug APK thông qua Gradle
+    - name: Build Debug APK
+      run: ./gradlew assembleDebug
+
+    # 5. Lưu trữ tệp APK vừa build thành Artifact để tải về
+    - name: Upload Debug APK Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: app-debug-apk
+        path: app/build/outputs/apk/debug/app-debug.apk
