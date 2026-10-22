@@ -24,17 +24,19 @@ jobs:
         java-version: '17'
         cache: 'gradle' # Tự động cache thư viện giúp build nhanh hơn ở các lần sau
 
-    # 3. Cấp quyền thực thi cho tệp gradlew
+    # 3. Cấp quyền thực thi cho tệp gradlew (Đã thêm working-directory)
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
+      working-directory: ./android # <--- THAY THƯ MỤC CHỨA GRADLEW CỦA BẠN VÀO ĐÂY
 
-    # 4. Thực thi lệnh build bản Debug APK thông qua Gradle
+    # 4. Thực thi lệnh build bản Debug APK thông qua Gradle (Đã thêm working-directory)
     - name: Build Debug APK
       run: ./gradlew assembleDebug
+      working-directory: ./android # <--- THAY THƯ MỤC CHỨA GRADLEW CỦA BẠN VÀO ĐÂY
 
     # 5. Lưu trữ tệp APK vừa build thành Artifact để tải về
     - name: Upload Debug APK Artifact
       uses: actions/upload-artifact@v4
       with:
         name: app-debug-apk
-        path: app/build/outputs/apk/debug/app-debug.apk
+        path: android/app/build/outputs/apk/debug/app-debug.apk # <--- Nhớ sửa lại đường dẫn path cho đúng nếu có thư mục con
